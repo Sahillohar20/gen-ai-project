@@ -12,10 +12,6 @@ const app = express();
 const allowedOrigin =
   "https://gen-ai-project-frontend-q7cx5ge3t-sahil-03cf.vercel.app";
 
-// =========================
-// CORS
-// =========================
-
 app.use((req, res, next) => {
   const origin = req.headers.origin;
 
@@ -40,24 +36,12 @@ app.use((req, res, next) => {
   next();
 });
 
-// =========================
-// MIDDLEWARE
-// =========================
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// =========================
-// ROUTES
-// =========================
-
 app.use("/api/auth", authRouter);
 app.use("/api/interview", interviewRouter);
-
-// =========================
-// HEALTH CHECK
-// =========================
 
 app.get("/api/health", (req, res) => {
   res.json({
@@ -65,32 +49,16 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// =========================
-// EXPORT APP
-// =========================
-
 module.exports = app;
-
-// =========================
-// DATABASE CONNECTION
-// =========================
 
 connectToDB()
   .then(() => {
     console.log("Connected to Database");
   })
   .catch((err) => {
-    console.error(
-      "Could not connect to MongoDB:",
-      err.message
-    );
-
+    console.error("Could not connect to MongoDB:", err.message);
     process.exit(1);
   });
-
-// =========================
-// LOCAL SERVER
-// =========================
 
 if (process.env.NODE_ENV !== "production") {
   app.listen(3000, () => {
