@@ -8,35 +8,83 @@ const connectToDB = require("./src/config/database");
 const authRouter = require("./src/routes/auth.routes");
 const interviewRouter = require("./src/routes/interview.routes");
 
-
-
 const app = express();
 
-app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://gen-ai-project-frontend-q7cx5ge3t-sahil-03cf.vercel.app"
-  ],
-  credentials: true
-}));
+// =========================
+// CORS
+// =========================
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://gen-ai-project-frontend-q7cx5ge3t-sahil-03cf.vercel.app"
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+  })
+);
+
+// =========================
+// MIDDLEWARE
+// =========================
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// =========================
+// ROUTES
+// =========================
+
 app.use("/api/auth", authRouter);
 app.use("/api/interview", interviewRouter);
 
+// =========================
+// HEALTH CHECK
+// =========================
+
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok" });
+  res.json({
+    status: "ok"
+  });
 });
+
+// =========================
+// EXPORT APP
+// =========================
 
 module.exports = app;
 
-connectToDB().catch((err) => {
-  console.error("Could not connect to MongoDB, exiting:", err.message);
-  process.exit(1);
-});
+// =========================
+// DATABASE CONNECTION
+// =========================
+
+connectToDB()
+  .then(() => {
+    console.log("Connected to Database");
+  })
+  .catch((err) => {
+    console.error(
+      "Could not connect to MongoDB:",
+      err.message
+    );
+
+    process.exit(1);
+  });
+
+// =========================
+// LOCAL SERVER
+// =========================
 
 if (process.env.NODE_ENV !== "production") {
   app.listen(3000, () => {
