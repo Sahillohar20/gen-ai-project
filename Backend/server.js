@@ -14,23 +14,15 @@ const app = express();
 // CORS
 // =========================
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://gen-ai-project-frontend-q7cx5ge3t-sahil-03cf.vercel.app"
-];
+const allowedOrigin =
+  "https://gen-ai-project-frontend-q7cx5ge3t-sahil-03cf.vercel.app";
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: allowedOrigin,
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -55,7 +47,7 @@ app.use("/api/interview", interviewRouter);
 
 app.get("/api/health", (req, res) => {
   res.json({
-    status: "ok"
+    status: "ok",
   });
 });
 
