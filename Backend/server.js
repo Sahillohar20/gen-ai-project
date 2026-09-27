@@ -15,7 +15,7 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://gen-ai-project-frontend-ekdpyu1jy-sahil-03cf.vercel.app"
+    "https://gen-ai-project-frontend-q7cx5ge3t-sahil-03cf.vercel.app"
   ],
   credentials: true
 }));
