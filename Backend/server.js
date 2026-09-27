@@ -13,12 +13,7 @@ const allowedOrigin =
   "https://gen-ai-project-frontend-q7cx5ge3t-sahil-03cf.vercel.app";
 
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
-
-  if (origin === allowedOrigin || origin === "http://localhost:5173") {
-    res.header("Access-Control-Allow-Origin", origin);
-  }
-
+  res.header("Access-Control-Allow-Origin", allowedOrigin);
   res.header("Access-Control-Allow-Credentials", "true");
   res.header(
     "Access-Control-Allow-Methods",
