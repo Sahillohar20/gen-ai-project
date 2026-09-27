@@ -7,16 +7,19 @@ import { login, register, logout, getMe } from "../services/auth.api";
 export const useAuth = () => {
 
     const context = useContext(AuthContext)
-    const { user, setUser, loading, setLoading } = context
+    const { user, setUser, loading, setLoading, error, setError } = context
 
 
     const handleLogin = async ({ email, password }) => {
         setLoading(true)
+        setError(null)
         try {
             const data = await login({ email, password })
             setUser(data.user)
+            return true
         } catch (err) {
-
+            setError(err.message)
+            return false
         } finally {
             setLoading(false)
         }
@@ -24,11 +27,14 @@ export const useAuth = () => {
 
     const handleRegister = async ({ username, email, password }) => {
         setLoading(true)
+        setError(null)
         try {
             const data = await register({ username, email, password })
             setUser(data.user)
+            return true
         } catch (err) {
-
+            setError(err.message)
+            return false
         } finally {
             setLoading(false)
         }
@@ -62,5 +68,5 @@ export const useAuth = () => {
 
     }, [])
 
-    return { user, loading, handleRegister, handleLogin, handleLogout }
+    return { user, loading, error, handleRegister, handleLogin, handleLogout }
 }

@@ -1,21 +1,45 @@
 require("dotenv").config();
 
-const app = require("./src/app");
+const express = require("express");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+
 const connectToDB = require("./src/config/database");
+const authRouter = require("./src/routes/auth.routes");
+const interviewRouter = require("./src/routes/interview.routes");
 
-const PORT = process.env.PORT || 3000;
 
-async function startServer() {
-  try {
-    await connectToDB();
 
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
-  } catch (error) {
-    console.error("Server could not start because MongoDB is unavailable.");
-    process.exit(1);
-  }
+const app = express();
+
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://YOUR-FRONTEND-PROJECT.vercel.app"
+  ],
+  credentials: true
+} ));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+app.use("/api/auth", authRouter);
+app.use("/api/interview", interviewRouter);
+
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok" });
+});
+
+module.exports = app;
+
+connectToDB().catch((err) => {
+  console.error("Could not connect to MongoDB, exiting:", err.message);
+  process.exit(1);
+});
+
+if (process.env.NODE_ENV !== "production") {
+  app.listen(3000, () => {
+    console.log("Server is running on port 3000");
+  });
 }
-
-startServer();
